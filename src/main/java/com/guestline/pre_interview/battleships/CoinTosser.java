@@ -6,7 +6,7 @@ import java.util.Random;
  * Tosses coin to decide which player starts the game first. Makes use of {@link Random} class.
  *
  * @author Jovhar Isayev
- * @see com.guestline.pre_interview.battleships.Computer
+ * @see Computer
  * @see User
  */
 public final class CoinTosser {
@@ -17,8 +17,8 @@ public final class CoinTosser {
     /**
      * Initializes CoinTosser object with provided participants of the game.
      *
-     * @param computer
-     * @param user
+     * @param computer user's computer
+     * @param user     user himself/herself
      */
     public CoinTosser(Player computer, Player user) {
         this.computer = computer;
@@ -26,9 +26,9 @@ public final class CoinTosser {
     }
 
     /**
-     * Throws coin to decide
+     * Throws coin to decide which player starts the game first.
      *
-     * @return
+     * @return {@link Player}
      */
     public Player toss() {
         int faceOfCoin = new Random().nextInt(POSSIBILITIES);
