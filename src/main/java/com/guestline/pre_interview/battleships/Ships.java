@@ -3,12 +3,12 @@ package com.guestline.pre_interview.battleships;
 /**
  * @author Jovhar Isayev
  */
-enum Ships {
+public enum Ships {
     BATTLESHIP(5, 1),
     DESTROYER(4, 2);
 
-    public int shipLength;
-    public int shipCount;
+    public final int shipLength;
+    public final int shipCount;
 
     Ships(int shipLength, int shipCount) {
         this.shipLength = shipLength;

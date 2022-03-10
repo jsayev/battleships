@@ -1,5 +1,10 @@
 package com.guestline.pre_interview.battleships;
 
+import com.guestline.pre_interview.battleships.game_utilities.CoinTosser;
+import com.guestline.pre_interview.battleships.players.Computer;
+import com.guestline.pre_interview.battleships.players.GameParticipant;
+import com.guestline.pre_interview.battleships.players.User;
+
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -9,38 +14,34 @@ import static java.lang.System.out;
  *
  * @author Jovhar Isayev
  */
-final class Game {
+public final class Game {
     public static final int MAP_ROWS = 10;
     public static final int MAP_COLUMN = 10;
     private static final Scanner input = new Scanner(System.in);
-    private final GameParticipant[] gameParticipants = new GameParticipant[2];
+    private final GameParticipant computer;
+    private final GameParticipant user;
 
-    Game(GameParticipant... gameParticipants) {
-        this.gameParticipants[0] = gameParticipants[0];
-        this.gameParticipants[1] = gameParticipants[1];
+    Game(GameParticipant computer, GameParticipant user) {
+        this.computer = computer;
+        this.user = user;
     }
 
     public static void main(String[] args) {
         out.println("Welcome to BattleShips game!");
 
         String computerName = System.getenv("USERNAME") + "'s pc";
-        GameParticipant computer = new GameParticipant(computerName, GamerType.COMPUTER, MAP_ROWS, MAP_COLUMN);
+        GameParticipant computer = new Computer(computerName);
 
         out.print("Please input your name: ");
-        GameParticipant user = new GameParticipant(input.nextLine(), GamerType.USER, MAP_ROWS , MAP_COLUMN);
+        GameParticipant user = new User(input.nextLine(), input);
 
         Game game = new Game(computer, user);
         game.start();
     }
 
     private void start() {
-        designateOpponents();
-        GameParticipant startingGamer = CoinTosser.toss(gameParticipants);
+        computer.setOpponent(user);
+        GameParticipant startingGamer = new CoinTosser(computer, user).toss();
         startingGamer.play();
-    }
-
-    private void designateOpponents() {
-        gameParticipants[0].addOpponent(gameParticipants[1]);
-        gameParticipants[1].addOpponent(gameParticipants[0]);
     }
 }
