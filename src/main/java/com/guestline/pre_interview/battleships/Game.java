@@ -10,27 +10,37 @@ import static java.lang.System.out;
  * @author Jovhar Isayev
  */
 final class Game {
+    public static final int MAP_ROWS = 10;
+    public static final int MAP_COLUMN = 10;
     private static final Scanner input = new Scanner(System.in);
-    private Player computer;
-    private Player user;
+    private final GameParticipant[] gameParticipants = new GameParticipant[2];
 
-    Game(Player computer, Player user) {
-        this.computer = computer;
-        this.user = user;
+    Game(GameParticipant... gameParticipants) {
+        this.gameParticipants[0] = gameParticipants[0];
+        this.gameParticipants[1] = gameParticipants[1];
     }
 
     public static void main(String[] args) {
         out.println("Welcome to BattleShips game!");
-        out.print("Please input your name: ");
 
-        String playerName = input.nextLine();
         String computerName = System.getenv("USERNAME") + "'s pc";
-        Game game = new Game(new Computer(computerName), new User(playerName));
+        GameParticipant computer = new GameParticipant(computerName, GamerType.COMPUTER, MAP_ROWS, MAP_COLUMN);
+
+        out.print("Please input your name: ");
+        GameParticipant user = new GameParticipant(input.nextLine(), GamerType.USER, MAP_ROWS , MAP_COLUMN);
+
+        Game game = new Game(computer, user);
         game.start();
     }
 
     private void start() {
-        Player startingPlayer = new CoinTosser(computer, user).toss();
-        startingPlayer.play();
+        designateOpponents();
+        GameParticipant startingGamer = CoinTosser.toss(gameParticipants);
+        startingGamer.play();
+    }
+
+    private void designateOpponents() {
+        gameParticipants[0].addOpponent(gameParticipants[1]);
+        gameParticipants[1].addOpponent(gameParticipants[0]);
     }
 }
