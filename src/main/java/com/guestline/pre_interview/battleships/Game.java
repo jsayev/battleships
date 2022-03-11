@@ -17,6 +17,7 @@ import static java.lang.System.out;
 public final class Game {
     public static final int MAP_ROWS = 10;
     public static final int MAP_COLUMN = 10;
+    public static final char startCoordinateLetter = 'A';
     private static final Scanner input = new Scanner(System.in);
     private final GameParticipant computer;
     private final GameParticipant user;
@@ -42,6 +43,7 @@ public final class Game {
     private void start() {
         computer.setOpponent(user);
         GameParticipant startingGamer = new CoinTosser(computer, user).toss();
+        out.println(startingGamer + " starting first.");
         startingGamer.play();
     }
 }

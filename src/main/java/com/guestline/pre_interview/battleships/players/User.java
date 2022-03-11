@@ -1,7 +1,6 @@
 package com.guestline.pre_interview.battleships.players;
 
-import com.guestline.pre_interview.battleships.Game;
-import com.guestline.pre_interview.battleships.Ships;
+import com.guestline.pre_interview.battleships.arsenal.Ship;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +13,7 @@ public final class User extends GameParticipant {
 
     public User(String name, Scanner input) {
         super(name);
-        super.shipCoordinates = generateShipCoordinates(gameMap, Ships.values());
+        super.shipCoordinates = placeShips(gameMap, Ship.values());
         this.input = input;
     }
 
@@ -34,7 +33,7 @@ public final class User extends GameParticipant {
     }
 
     @Override
-    public List<String> generateShipCoordinates(int[][] gameMap, Ships[] ships) {
+    public List<String> placeShips(int[][] gameMap, Ship[] ships) {
         //todo ask for user input to generate ships at desired locations
         return null;
     }

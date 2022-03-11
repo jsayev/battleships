@@ -24,11 +24,10 @@ public abstract class GameParticipant implements Player, ShipCoordinator {
     }
 
     private List<String> generateAvailableSpotsToHit(int mapRows, int mapColumns) {
-        char startCoordinateLetter = 'A';
         ArrayList<String> coordinates = new ArrayList<>();
         for (int row = 0; row < mapRows; row++) {
             for (int column = 0; column < mapColumns; column++) {
-                coordinates.add(String.format("%c%d", (char) (startCoordinateLetter + row), column + 1));
+                coordinates.add(String.format("%c%d", (char) (Game.startCoordinateLetter + row), column + 1));
             }
         }
         return coordinates;
@@ -39,5 +38,10 @@ public abstract class GameParticipant implements Player, ShipCoordinator {
             this.opponent = gameParticipant;
             gameParticipant.opponent = this;
         }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
