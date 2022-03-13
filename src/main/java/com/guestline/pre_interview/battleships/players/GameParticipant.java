@@ -18,8 +18,8 @@ public abstract class GameParticipant implements Player, ShipCoordinator {
 
     GameParticipant(String name) {
         this.name = name;
-        this.availableSpotsToHit = generateAvailableSpotsToHit(Game.MAP_ROWS, Game.MAP_COLUMN);
-        this.gameMap = new int[Game.MAP_ROWS][Game.MAP_COLUMN];
+        this.availableSpotsToHit = generateAvailableSpotsToHit(Game.MAP_ROW_SIZE, Game.MAP_COLUMN_SIZE);
+        this.gameMap = new int[Game.MAP_ROW_SIZE][Game.MAP_COLUMN_SIZE];
         this.alreadyHitSpots = new ArrayList<>();
     }
 
@@ -27,7 +27,7 @@ public abstract class GameParticipant implements Player, ShipCoordinator {
         ArrayList<String> coordinates = new ArrayList<>();
         for (int row = 0; row < mapRows; row++) {
             for (int column = 0; column < mapColumns; column++) {
-                coordinates.add(String.format("%c%d", (char) (Game.startCoordinateLetter + row), column + 1));
+                coordinates.add(String.format("%c%d", (char) (Game.START_COORDINATE_LETTER + row), column + 1));
             }
         }
         return coordinates;

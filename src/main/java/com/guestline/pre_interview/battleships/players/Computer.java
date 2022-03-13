@@ -24,7 +24,6 @@ public final class Computer extends GameParticipant {
     @Override
     public List<String> placeShips(int[][] gameMap, Ship[] ships) {
         List<String> coordinates = new ArrayList<>();
-
         for (Ship ship : ships) {
             for (int shipCount = 0; shipCount < ship.shipCount; shipCount++) {
                 coordinates.addAll(makeCoordinates(ship));
@@ -37,34 +36,75 @@ public final class Computer extends GameParticipant {
         ArrayList<String> coordinates = new ArrayList<>();
         String startCoordinate = String.format(
                 "%c%d",
-                (char) (new Random().nextInt(Game.MAP_ROWS) + 'A'),
-                new Random().nextInt(Game.MAP_COLUMN));
-        while (!shipCoordinates.contains(startCoordinate)) {
-            if (isHorizontalPlacementPossible(startCoordinate, ship)) {
-                shipCoordinates.
-            } else if (isVerticalPlacementPossible(startCoordinate, ship)) {
+                (char) (new Random().nextInt(Game.MAP_ROW_SIZE) + 'A'),
+                new Random().nextInt(Game.MAP_COLUMN_SIZE));
 
+        boolean startCycle = true;
+        while (startCycle) {
+            if (isPlacementPossible(startCoordinate, ship, true)) {
+                shipCoordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, true));
+                startCycle = false;
+            } else if (isPlacementPossible(startCoordinate, ship, false)) {
+                shipCoordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, false));
+                startCycle = false;
             } else {
                 startCoordinate = String.format(
                         "%c%d",
-                        (char) (new Random().nextInt(Game.MAP_ROWS) + 'A'),
-                        new Random().nextInt(Game.MAP_COLUMN));
+                        (char) (new Random().nextInt(Game.MAP_ROW_SIZE) + 'A'),
+                        new Random().nextInt(Game.MAP_COLUMN_SIZE));
             }
         }
         return coordinates;
     }
 
-    private boolean isHorizontalPlacementPossible(String startCoordinate, Ship ship) {
+    private boolean isPlacementPossible(String startCoordinate, Ship ship, boolean alongHorizontalLine) {
+        int letterCoordinate = startCoordinate.charAt(0)-Game.START_COORDINATE_LETTER;
         int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
-        if (ship.shipLength + numberCoordinate > Game.MAP_COLUMN) {
+
+        if (alongHorizontalLine && ship.shipLength + numberCoordinate > Game.MAP_COLUMN_SIZE) {
+            return false;
+        } else if (ship.shipLength + letterCoordinate > Game.MAP_ROW_SIZE) {
             return false;
         }
-        char letterCoordinate = startCoordinate.charAt(0);
-        String[] possibleCoordinates = new String[ship.shipLength];
-        possibleCoordinates[0] = startCoordinate;
-        for (int len = 1; len < ship.shipLength; len++) {
-            possibleCoordinates[len] = String.format("%c%d", letterCoordinate, numberCoordinate + len);
+
+        if (shipCoordinates.size() == 0) return true;
+
+        List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine);
+        for (String possibleCoordinate : possibleCoordinates) {
+            if (shipCoordinates.indexOf(possibleCoordinate) != -1) {
+                return false;
+            }
         }
-        // todo implement logic to check all elements in possible coordinates if any of them is available in shipcoordinates elements
+        return true;
+    }
+
+    private boolean isHorizontalPlacementPossible(String startCoordinate, Ship ship) {
+        int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
+        if (ship.shipLength + numberCoordinate > Game.MAP_COLUMN_SIZE) {
+            return false;
+        }
+        if (shipCoordinates.size() == 0) return true;
+        List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, true);
+        for (String possibleCoordinate : possibleCoordinates) {
+            if (shipCoordinates.indexOf(possibleCoordinate) != -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<String> generatePossibleCoordinates(String startCoordinate, Ship ship, boolean alongHorizontalLine) {
+        char letterCoordinate = startCoordinate.charAt(0);
+        int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
+
+        List<String> possibleCoordinates = new ArrayList<>(ship.shipLength);
+        possibleCoordinates.add(startCoordinate);
+        for (int len = 1; len < ship.shipLength; len++) {
+            possibleCoordinates.add(String.format(
+                    "%c%d",
+                    alongHorizontalLine ? letterCoordinate : letterCoordinate + len,
+                    alongHorizontalLine ? numberCoordinate + len : numberCoordinate));
+        }
+        return possibleCoordinates;
     }
 }

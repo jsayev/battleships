@@ -15,10 +15,10 @@ import static java.lang.System.out;
  * @author Jovhar Isayev
  */
 public final class Game {
-    public static final int MAP_ROWS = 10;
-    public static final int MAP_COLUMN = 10;
-    public static final char startCoordinateLetter = 'A';
-    private static final Scanner input = new Scanner(System.in);
+    public static final int MAP_ROW_SIZE = 10;
+    public static final int MAP_COLUMN_SIZE = 10;
+    public static final char START_COORDINATE_LETTER = 'A';
+    private static final Scanner INPUT = new Scanner(System.in);
     private final GameParticipant computer;
     private final GameParticipant user;
 
@@ -34,7 +34,7 @@ public final class Game {
         GameParticipant computer = new Computer(computerName);
 
         out.print("Please input your name: ");
-        GameParticipant user = new User(input.nextLine(), input);
+        GameParticipant user = new User(INPUT.nextLine(), INPUT);
 
         Game game = new Game(computer, user);
         game.start();

@@ -20,16 +20,16 @@ public final class User extends GameParticipant {
     @Override
     public void play() {
         System.out.println("Please input your desired coordinates: ");
-        String inputCoordinates = input.nextLine();
-        while (!availableSpotsToHit.contains(inputCoordinates)) {
-            System.err.println("Invalid coordinates! Try again: ");
-            inputCoordinates = input.nextLine();
-        }
-        while (orderToHitOnCoordinates(inputCoordinates)) {
-            System.out.println("Target hit! Next coordinates: ");
-            inputCoordinates = input.nextLine();
-        }
-        opponent.play();
+//        String inputCoordinates = input.nextLine();
+//        while (!availableSpotsToHit.contains(inputCoordinates)) {
+//            System.err.println("Invalid coordinates! Try again: ");
+//            inputCoordinates = input.nextLine();
+//        }
+//        while (orderToHitOnCoordinates(inputCoordinates)) {
+//            System.out.println("Target hit! Next coordinates: ");
+//            inputCoordinates = input.nextLine();
+//        }
+//        opponent.play();
     }
 
     @Override
