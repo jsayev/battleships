@@ -21,6 +21,7 @@ public abstract class GameParticipant implements Player, ShipCoordinator {
         this.availableSpotsToHit = generateAvailableSpotsToHit(Game.MAP_ROW_SIZE, Game.MAP_COLUMN_SIZE);
         this.gameMap = new int[Game.MAP_ROW_SIZE][Game.MAP_COLUMN_SIZE];
         this.alreadyHitSpots = new ArrayList<>();
+        this.shipCoordinates = new ArrayList<>();
     }
 
     private List<String> generateAvailableSpotsToHit(int mapRows, int mapColumns) {

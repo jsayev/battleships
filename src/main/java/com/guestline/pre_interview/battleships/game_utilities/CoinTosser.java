@@ -1,31 +1,29 @@
 package com.guestline.pre_interview.battleships.game_utilities;
 
-import com.guestline.pre_interview.battleships.players.GameParticipant;
-
 import java.util.Random;
 
 /**
- * Tosses coin to decide which player starts the game first. Makes use of {@link Random} class.
+ * Tosses coin to decide which participant goes first. Makes use of {@link Random} class.
  *
  * @author Jovhar Isayev
  */
-public final class CoinTosser {
+public final class CoinTosser<T> {
     public static final int POSSIBILITIES = 2;
-    private final GameParticipant computer;
-    private final GameParticipant user;
+    private final T participantOne;
+    private final T participantTwo;
 
-    public CoinTosser(GameParticipant computer, GameParticipant user) {
-        this.computer = computer;
-        this.user = user;
+    public CoinTosser(T participantOne, T participantTwo) {
+        this.participantOne = participantOne;
+        this.participantTwo = participantTwo;
     }
 
     /**
-     * Throws coin to decide which player starts the game first.
+     * Throws coin to decide which participant goes first.
      *
-     * @return {@link GameParticipant}
+     * @return {@link T}
      */
-    public GameParticipant toss() {
+    public T toss() {
         int faceOfCoin = new Random().nextInt(POSSIBILITIES);
-        return faceOfCoin == 0 ? computer : user;
+        return faceOfCoin == 0 ? participantOne : participantTwo;
     }
 }

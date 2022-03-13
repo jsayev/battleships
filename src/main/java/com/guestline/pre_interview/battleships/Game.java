@@ -42,7 +42,7 @@ public final class Game {
 
     private void start() {
         computer.setOpponent(user);
-        GameParticipant startingGamer = new CoinTosser(computer, user).toss();
+        GameParticipant startingGamer = new CoinTosser<>(computer, user).toss();
         out.println(startingGamer + " starting first.");
         startingGamer.play();
     }

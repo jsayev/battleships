@@ -2,6 +2,7 @@ package com.guestline.pre_interview.battleships.players;
 
 import com.guestline.pre_interview.battleships.Game;
 import com.guestline.pre_interview.battleships.arsenal.Ship;
+import com.guestline.pre_interview.battleships.game_utilities.CoinTosser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +42,12 @@ public final class Computer extends GameParticipant {
 
         boolean startCycle = true;
         while (startCycle) {
-            if (isPlacementPossible(startCoordinate, ship, true)) {
-                shipCoordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, true));
+            boolean alongHorizontalLine = new CoinTosser<>(true, false).toss();
+            if (isPlacementPossible(startCoordinate, ship, alongHorizontalLine)) {
+                coordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine));
                 startCycle = false;
-            } else if (isPlacementPossible(startCoordinate, ship, false)) {
-                shipCoordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, false));
+            } else if (isPlacementPossible(startCoordinate, ship, alongHorizontalLine)) {
+                coordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine));
                 startCycle = false;
             } else {
                 startCoordinate = String.format(
@@ -58,7 +60,7 @@ public final class Computer extends GameParticipant {
     }
 
     private boolean isPlacementPossible(String startCoordinate, Ship ship, boolean alongHorizontalLine) {
-        int letterCoordinate = startCoordinate.charAt(0)-Game.START_COORDINATE_LETTER;
+        int letterCoordinate = startCoordinate.charAt(0) - Game.START_COORDINATE_LETTER;
         int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
 
         if (alongHorizontalLine && ship.shipLength + numberCoordinate > Game.MAP_COLUMN_SIZE) {
