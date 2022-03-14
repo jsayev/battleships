@@ -14,7 +14,7 @@ import java.util.Random;
 public final class Computer extends GameParticipant {
     public Computer(String name) {
         super(name);
-        super.shipCoordinates = placeShips(gameMap, Ship.values());
+        super.shipCoordinates = placeShips(Ship.values());
     }
 
     @Override
@@ -23,10 +23,10 @@ public final class Computer extends GameParticipant {
     }
 
     @Override
-    public List<String> placeShips(int[][] gameMap, Ship[] ships) {
+    public List<String> placeShips(Ship[] ships) {
         List<String> coordinates = new ArrayList<>();
         for (Ship ship : ships) {
-            for (int shipCount = 0; shipCount < ship.shipCount; shipCount++) {
+            for (int count = 0; count < ship.count; count++) {
                 coordinates.addAll(makeCoordinates(ship));
             }
         }
@@ -63,9 +63,9 @@ public final class Computer extends GameParticipant {
         int letterCoordinate = startCoordinate.charAt(0) - Game.START_COORDINATE_LETTER;
         int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
 
-        if (alongHorizontalLine && ship.shipLength + numberCoordinate > Game.MAP_COLUMN_SIZE) {
+        if (alongHorizontalLine && ship.length + numberCoordinate > Game.MAP_COLUMN_SIZE) {
             return false;
-        } else if (ship.shipLength + letterCoordinate > Game.MAP_ROW_SIZE) {
+        } else if (ship.length + letterCoordinate > Game.MAP_ROW_SIZE) {
             return false;
         }
 
@@ -80,28 +80,13 @@ public final class Computer extends GameParticipant {
         return true;
     }
 
-    private boolean isHorizontalPlacementPossible(String startCoordinate, Ship ship) {
-        int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
-        if (ship.shipLength + numberCoordinate > Game.MAP_COLUMN_SIZE) {
-            return false;
-        }
-        if (shipCoordinates.size() == 0) return true;
-        List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, true);
-        for (String possibleCoordinate : possibleCoordinates) {
-            if (shipCoordinates.indexOf(possibleCoordinate) != -1) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private List<String> generatePossibleCoordinates(String startCoordinate, Ship ship, boolean alongHorizontalLine) {
         char letterCoordinate = startCoordinate.charAt(0);
         int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
 
-        List<String> possibleCoordinates = new ArrayList<>(ship.shipLength);
+        List<String> possibleCoordinates = new ArrayList<>(ship.length);
         possibleCoordinates.add(startCoordinate);
-        for (int len = 1; len < ship.shipLength; len++) {
+        for (int len = 1; len < ship.length; len++) {
             possibleCoordinates.add(String.format(
                     "%c%d",
                     alongHorizontalLine ? letterCoordinate : letterCoordinate + len,

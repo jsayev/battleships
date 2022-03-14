@@ -7,11 +7,11 @@ public enum Ship {
     BATTLESHIP(5, 1),
     DESTROYER(4, 2);
 
-    public final int shipLength;
-    public final int shipCount;
+    public final int length;
+    public final int count;
 
-    Ship(int shipLength, int shipCount) {
-        this.shipLength = shipLength;
-        this.shipCount = shipCount;
+    Ship(int length, int count) {
+        this.length = length;
+        this.count = count;
     }
 }

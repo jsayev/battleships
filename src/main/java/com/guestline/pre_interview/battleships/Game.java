@@ -33,7 +33,7 @@ public final class Game {
         String computerName = System.getenv("USERNAME") + "'s pc";
         GameParticipant computer = new Computer(computerName);
 
-        out.print("Please input your name: ");
+        out.print("Please input your player name: ");
         GameParticipant user = new User(INPUT.nextLine(), INPUT);
 
         Game game = new Game(computer, user);

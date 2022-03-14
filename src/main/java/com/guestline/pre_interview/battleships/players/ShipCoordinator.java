@@ -8,5 +8,5 @@ import java.util.List;
  * @author Jovhar Isayev
  */
 interface ShipCoordinator {
-    List<String> placeShips(int[][] gameMap, Ship[] ships);
+    List<String> placeShips(Ship[] ships);
 }
