@@ -38,7 +38,7 @@ public final class Computer extends GameParticipant {
         String startCoordinate = String.format(
                 "%c%d",
                 (char) (new Random().nextInt(Game.MAP_ROW_SIZE) + 'A'),
-                new Random().nextInt(Game.MAP_COLUMN_SIZE));
+                new Random().nextInt(Game.MAP_COLUMN_SIZE) + 1);
 
         boolean startCycle = true;
         while (startCycle) {
@@ -53,7 +53,7 @@ public final class Computer extends GameParticipant {
                 startCoordinate = String.format(
                         "%c%d",
                         (char) (new Random().nextInt(Game.MAP_ROW_SIZE) + 'A'),
-                        new Random().nextInt(Game.MAP_COLUMN_SIZE));
+                        new Random().nextInt(Game.MAP_COLUMN_SIZE) + 1);
             }
         }
         return coordinates;
@@ -73,7 +73,7 @@ public final class Computer extends GameParticipant {
 
         List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine);
         for (String possibleCoordinate : possibleCoordinates) {
-            if (shipCoordinates.indexOf(possibleCoordinate) != -1) {
+            if (shipCoordinates.contains(possibleCoordinate)) {
                 return false;
             }
         }

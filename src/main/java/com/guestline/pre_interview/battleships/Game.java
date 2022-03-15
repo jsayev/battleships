@@ -34,7 +34,8 @@ public final class Game {
         GameParticipant computer = new Computer(computerName);
 
         out.print("Please input your player name: ");
-        GameParticipant user = new User(INPUT.nextLine(), INPUT);
+        String userName = INPUT.nextLine();
+        GameParticipant user = new User(userName,INPUT);
 
         Game game = new Game(computer, user);
         game.start();

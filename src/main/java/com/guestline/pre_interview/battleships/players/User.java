@@ -16,8 +16,8 @@ public final class User extends GameParticipant {
 
     public User(String name, Scanner input) {
         super(name);
-        super.shipCoordinates = placeShips(Ship.values());
         this.input = input;
+        super.shipCoordinates = placeShips(Ship.values());
     }
 
     @Override
@@ -42,12 +42,13 @@ public final class User extends GameParticipant {
             for (int count = 0; count < ship.count; count++) {
                 boolean startCycle = true;
                 while (startCycle) {
+                    System.out.println("=".repeat(5) + " Ship placement phase " + "=".repeat(5));
                     System.out.printf("Placing following ship:\n" +
                             "- name: %s\n" +
                             "- length: %d\n", ship.name().toUpperCase(), ship.length);
-                    System.out.printf("Please type in coordinates in the form of \"A3,A4,A5,...\" : ", ship.name().toLowerCase(), ship.length);
+                    System.out.printf("Please type in the cell coordinates(A1,J10 etc.) with comma between them: ");
                     String[] inputCoordinates = input.nextLine().split(",");
-                    if (validateUserInput(inputCoordinates, ship.length)) {
+                    if (validateUserInput(inputCoordinates, ship.length, shipCoordinates)) {
                         shipCoordinates.addAll(List.of(inputCoordinates));
                         startCycle = false;
                     }
@@ -57,28 +58,51 @@ public final class User extends GameParticipant {
         return shipCoordinates;
     }
 
-    private boolean validateUserInput(String[] inputCoordinates, int shipLength) {
+    private boolean validateUserInput(String[] inputCoordinates, int shipLength, List<String> registeredShipCoordinates) {
         try {
             if (inputCoordinates.length != shipLength) {
                 throw new InvalidCoordinateInput(InvalidCoordinateInput.SHIP_LENGTH_REQUIREMENTS);
             }
-            //todo make sure coordinates follow logical order either A1,A2,A3 or A1,B1,C1
+
+            boolean shouldFollowHorizontalLine = inputCoordinates[0].charAt(0) == inputCoordinates[1].charAt(0);
+
             for (int i = 0; i < inputCoordinates.length; i++) {
                 if (inputCoordinates[i].length() > 3 || inputCoordinates[i].length() < 2) {
                     throw new InvalidCoordinateInput(InvalidCoordinateInput.INVALID_COORDINATE_LENGTH);
                 }
 
-                int letterCoordinate = inputCoordinates[i].charAt(0);
-                int numberCoordinate = Integer.parseInt(inputCoordinates[i].substring(1));
-                int letterDifference = letterCoordinate - Game.START_COORDINATE_LETTER;
+                int currentLetterCoordinate = inputCoordinates[i].charAt(0);
+                int currentNumberCoordinate = Integer.parseInt(inputCoordinates[i].substring(1));
+                boolean isNumberOutOfMapLimit = currentNumberCoordinate > Game.MAP_COLUMN_SIZE || currentNumberCoordinate < 1;
+                boolean isLetterOutOfMapLimit = currentLetterCoordinate - Game.START_COORDINATE_LETTER < 0 || currentLetterCoordinate - Game.START_COORDINATE_LETTER > 9;
 
-                if ((letterDifference < 0 || letterDifference > 9) || (numberCoordinate > Game.MAP_COLUMN_SIZE | numberCoordinate < 1)) {
+                if (isLetterOutOfMapLimit || isNumberOutOfMapLimit) {
                     throw new InvalidCoordinateInput(InvalidCoordinateInput.UNSUPPORTED_CHARACTERS);
                 }
-            }
 
-        } catch (InvalidCoordinateInput err) {
-            System.err.println(err.getMessage());
+                if (i <= inputCoordinates.length - 2) {
+                    char nextLetterCoordinate = inputCoordinates[i + 1].charAt(0);
+                    int nextNumberCoordinate = Integer.parseInt(inputCoordinates[i + 1].substring(1));
+                    if (shouldFollowHorizontalLine) {
+                        if (!(currentLetterCoordinate == nextLetterCoordinate && currentNumberCoordinate + 1 == nextNumberCoordinate)) {
+                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NOT_HORIZONTAL);
+                        }
+                    } else {
+                        if (!(currentLetterCoordinate + 1 == nextLetterCoordinate && currentNumberCoordinate == Integer.parseInt(inputCoordinates[i + 1].substring(1)))) {
+                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NOT_VERTICAL);
+                        }
+                    }
+                }
+
+                if (registeredShipCoordinates.size() > 0 && registeredShipCoordinates.contains(inputCoordinates[i]))
+                    throw new InvalidCoordinateInput(InvalidCoordinateInput.COORDINATE_EXISTS);
+            }
+        } catch (InvalidCoordinateInput | NumberFormatException err) {
+            if(err instanceof NumberFormatException){
+                System.err.println("Invalid number coordinate!");
+            }else{
+                System.err.println(err.getMessage());
+            }
             return false;
         }
         return true;
