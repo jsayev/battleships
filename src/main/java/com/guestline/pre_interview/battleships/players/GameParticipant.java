@@ -1,27 +1,30 @@
 package com.guestline.pre_interview.battleships.players;
 
 import com.guestline.pre_interview.battleships.Game;
+import com.guestline.pre_interview.battleships.arsenal.Ship;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Jovhar Isayev
  */
 public abstract class GameParticipant implements Player, ShipCoordinator {
     protected final String name;
-    protected final List<String> alreadyHitSpots;
-    protected final List<String> availableSpotsToHit;
+    protected final List<String> damagedCoordinatesOfOpponent;
+    protected final List<String> availableCoordinatesToHit;
     protected int[][] gameMap;
     protected GameParticipant opponent;
-    protected List<String> shipCoordinates;
+    protected EnumMap<Ship, List<String>> shipCoordinates;
+
+    {
+        this.availableCoordinatesToHit = generateAvailableSpotsToHit(Game.MAP_ROW_SIZE, Game.MAP_COLUMN_SIZE);
+        this.gameMap = new int[Game.MAP_ROW_SIZE][Game.MAP_COLUMN_SIZE];
+        this.damagedCoordinatesOfOpponent = new ArrayList<>();
+        this.shipCoordinates = new EnumMap<>(Ship.class);
+    }
 
     GameParticipant(String name) {
         this.name = name;
-        this.availableSpotsToHit = generateAvailableSpotsToHit(Game.MAP_ROW_SIZE, Game.MAP_COLUMN_SIZE);
-        this.gameMap = new int[Game.MAP_ROW_SIZE][Game.MAP_COLUMN_SIZE];
-        this.alreadyHitSpots = new ArrayList<>();
-        this.shipCoordinates = new ArrayList<>();
     }
 
     private List<String> generateAvailableSpotsToHit(int mapRows, int mapColumns) {

@@ -5,6 +5,7 @@ import com.guestline.pre_interview.battleships.arsenal.Ship;
 import com.guestline.pre_interview.battleships.game_utilities.CoinTosser;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
 
@@ -19,15 +20,58 @@ public final class Computer extends GameParticipant {
 
     @Override
     public void play() {
-        System.out.println("Computer's turn! It played: ");
+        System.out.println(this + " plays");
+//        String pickedCoordinate = availableCoordinatesToHit.get(new Random().nextInt(availableCoordinatesToHit.size()));
+//        boolean startShooting = true;
+//        while (startShooting) {
+//            if (this.opponent.shipCoordinates.values().) {
+//                damagedCoordinatesOfOpponent.add(pickedCoordinate);
+//                pickedCoordinate = pickLogicalCoordinate(pickedCoordinate);
+//            } else {
+//                startShooting = false;
+//            }
+//        }
+//        this.opponent.play();
+    }
+
+    // TODO  to be completed
+    private String pickLogicalCoordinate(final String pickedCoordinate) {
+        String logicalCoordinate = null;
+        char letter = pickedCoordinate.charAt(0);
+        int number = Integer.parseInt(pickedCoordinate.substring(1));
+        if (letter == Game.START_COORDINATE_LETTER && number == 1) {
+
+        } else if (letter == Game.START_COORDINATE_LETTER && number == 10) {
+
+        } else if (letter == Game.START_COORDINATE_LETTER + 9 && number == 1) {
+
+        } else if (letter == Game.START_COORDINATE_LETTER + 9 && number == 10) {
+
+        } else if (letter == Game.START_COORDINATE_LETTER && number > 1 && number < 10) {
+
+        } else if (letter == Game.START_COORDINATE_LETTER + 9 && number > 1 && number < 10) {
+
+        } else if (letter > Game.START_COORDINATE_LETTER && letter < Game.START_COORDINATE_LETTER + 9 && number == 1) {
+
+        } else if (letter > Game.START_COORDINATE_LETTER && letter < Game.START_COORDINATE_LETTER + 9 && number == 10) {
+
+        } else {
+
+        }
+        damagedCoordinatesOfOpponent.add(logicalCoordinate);
+        return logicalCoordinate;
     }
 
     @Override
-    public List<String> placeShips(Ship[] ships) {
-        List<String> coordinates = new ArrayList<>();
+    public EnumMap<Ship, List<String>> placeShips(Ship[] ships) {
+        EnumMap<Ship, List<String>> coordinates = new EnumMap<>(Ship.class);
         for (Ship ship : ships) {
             for (int count = 0; count < ship.count; count++) {
-                coordinates.addAll(makeCoordinates(ship));
+                List<String> existingCoordinates = coordinates.putIfAbsent(ship, makeCoordinates(ship));
+                if (existingCoordinates != null) {
+                    existingCoordinates.addAll(makeCoordinates(ship));
+                    coordinates.put(ship, existingCoordinates);
+                }
             }
         }
         return coordinates;
@@ -69,12 +113,13 @@ public final class Computer extends GameParticipant {
             return false;
         }
 
-        if (shipCoordinates.size() == 0) return true;
+        if (shipCoordinates.values().size() == 0) return true;
 
         List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine);
+
         for (String possibleCoordinate : possibleCoordinates) {
-            if (shipCoordinates.contains(possibleCoordinate)) {
-                return false;
+            for (List<String> coordinateList : shipCoordinates.values()) {
+                return coordinateList.stream().noneMatch(sc -> sc.equals(possibleCoordinate));
             }
         }
         return true;

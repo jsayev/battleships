@@ -7,8 +7,6 @@ import com.guestline.pre_interview.battleships.players.User;
 
 import java.util.Scanner;
 
-import static java.lang.System.out;
-
 /**
  * Start point for the BattleShips game.
  *
@@ -28,14 +26,14 @@ public final class Game {
     }
 
     public static void main(String[] args) {
-        out.println("Welcome to BattleShips game!");
+        System.out.println("Welcome to BattleShips game!");
 
         String computerName = System.getenv("USERNAME") + "'s pc";
         GameParticipant computer = new Computer(computerName);
 
-        out.print("Please input your player name: ");
+        System.out.print("Please input your player name: ");
         String userName = INPUT.nextLine();
-        GameParticipant user = new User(userName,INPUT);
+        GameParticipant user = new User(userName, INPUT);
 
         Game game = new Game(computer, user);
         game.start();
@@ -44,7 +42,7 @@ public final class Game {
     private void start() {
         computer.setOpponent(user);
         GameParticipant startingGamer = new CoinTosser<>(computer, user).toss();
-        out.println(startingGamer + " starting first.");
+        System.out.println(startingGamer + " starting first.");
         startingGamer.play();
     }
 }

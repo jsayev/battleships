@@ -4,9 +4,7 @@ import com.guestline.pre_interview.battleships.Game;
 import com.guestline.pre_interview.battleships.arsenal.Ship;
 import com.guestline.pre_interview.battleships.errors.InvalidCoordinateInput;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author Jovhar Isayev
@@ -17,39 +15,39 @@ public final class User extends GameParticipant {
     public User(String name, Scanner input) {
         super(name);
         this.input = input;
-        super.shipCoordinates = placeShips(Ship.values());
+        this.shipCoordinates = placeShips(Ship.values());
     }
 
     @Override
     public void play() {
         System.out.println("Please input your desired coordinates: ");
-//        String inputCoordinates = input.nextLine();
-//        while (!availableSpotsToHit.contains(inputCoordinates)) {
-//            System.err.println("Invalid coordinates! Try again: ");
-//            inputCoordinates = input.nextLine();
-//        }
-//        while (orderToHitOnCoordinates(inputCoordinates)) {
-//            System.out.println("Target hit! Next coordinates: ");
-//            inputCoordinates = input.nextLine();
-//        }
-//        opponent.play();
     }
 
     @Override
-    public List<String> placeShips(Ship[] ships) {
-        List<String> shipCoordinates = new ArrayList<>();
+    public EnumMap<Ship, List<String>> placeShips(Ship[] ships) {
+        EnumMap<Ship, List<String>> shipCoordinates = new EnumMap<>(Ship.class);
         for (Ship ship : ships) {
             for (int count = 0; count < ship.count; count++) {
+
+                ArrayList<String> coordinates = new ArrayList<>();
+                shipCoordinates.values().forEach(coordinates::addAll);
+
                 boolean startCycle = true;
                 while (startCycle) {
-                    System.out.println("=".repeat(5) + " Ship placement phase " + "=".repeat(5));
-                    System.out.printf("Placing following ship:\n" +
-                            "- name: %s\n" +
-                            "- length: %d\n", ship.name().toUpperCase(), ship.length);
-                    System.out.printf("Please type in the cell coordinates(A1,J10 etc.) with comma between them: ");
+                    System.out.printf("""
+                            Placing following ship:
+                            - name: %s
+                            - length: %d%n""", ship.name().toUpperCase(), ship.length);
+                    System.out.println("Please type in the cell coordinates(A1,A2,A3 etc.) with comma between them: ");
                     String[] inputCoordinates = input.nextLine().split(",");
-                    if (validateUserInput(inputCoordinates, ship.length, shipCoordinates)) {
-                        shipCoordinates.addAll(List.of(inputCoordinates));
+                    // todo finish this
+                    if (validateUserInput(inputCoordinates, ship.length, coordinates)) {
+                        shipCoordinates.computeIfAbsent(ship, s -> new ArrayList<>(List.of(inputCoordinates)));
+//                        if (!shipCoordinates.containsKey(ship)) {
+//                            shipCoordinates.put(ship, List.of(inputCoordinates));
+//                        } else {
+//                            shipCoordinates.get(ship).addAll(List.of(inputCoordinates));
+//                        }
                         startCycle = false;
                     }
                 }
@@ -85,11 +83,11 @@ public final class User extends GameParticipant {
                     int nextNumberCoordinate = Integer.parseInt(inputCoordinates[i + 1].substring(1));
                     if (shouldFollowHorizontalLine) {
                         if (!(currentLetterCoordinate == nextLetterCoordinate && currentNumberCoordinate + 1 == nextNumberCoordinate)) {
-                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NOT_HORIZONTAL);
+                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NON_HORIZONTAL);
                         }
                     } else {
                         if (!(currentLetterCoordinate + 1 == nextLetterCoordinate && currentNumberCoordinate == Integer.parseInt(inputCoordinates[i + 1].substring(1)))) {
-                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NOT_VERTICAL);
+                            throw new InvalidCoordinateInput(InvalidCoordinateInput.NON_VERTICAL);
                         }
                     }
                 }
@@ -97,21 +95,13 @@ public final class User extends GameParticipant {
                 if (registeredShipCoordinates.size() > 0 && registeredShipCoordinates.contains(inputCoordinates[i]))
                     throw new InvalidCoordinateInput(InvalidCoordinateInput.COORDINATE_EXISTS);
             }
-        } catch (InvalidCoordinateInput | NumberFormatException err) {
-            if(err instanceof NumberFormatException){
-                System.err.println("Invalid number coordinate!");
-            }else{
-                System.err.println(err.getMessage());
-            }
+        } catch (InvalidCoordinateInput err) {
+            System.err.println(err.getMessage());
+            return false;
+        } catch (NumberFormatException err) {
+            System.err.println(InvalidCoordinateInput.INVALID_NUMBER);
             return false;
         }
         return true;
-    }
-
-    private boolean orderToHitOnCoordinates(String coordinates) {
-        availableSpotsToHit.remove(coordinates);
-        alreadyHitSpots.add(coordinates);
-//        return opponent.shipCoordinates.contains(coordinates);
-        return false;
     }
 }
