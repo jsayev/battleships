@@ -28,7 +28,6 @@ public final class User extends GameParticipant {
         EnumMap<Ship, List<String>> shipCoordinates = new EnumMap<>(Ship.class);
         for (Ship ship : ships) {
             for (int count = 0; count < ship.count; count++) {
-
                 ArrayList<String> coordinates = new ArrayList<>();
                 shipCoordinates.values().forEach(coordinates::addAll);
 
@@ -40,14 +39,12 @@ public final class User extends GameParticipant {
                             - length: %d%n""", ship.name().toUpperCase(), ship.length);
                     System.out.println("Please type in the cell coordinates(A1,A2,A3 etc.) with comma between them: ");
                     String[] inputCoordinates = input.nextLine().split(",");
-                    // todo finish this
                     if (validateUserInput(inputCoordinates, ship.length, coordinates)) {
-                        shipCoordinates.computeIfAbsent(ship, s -> new ArrayList<>(List.of(inputCoordinates)));
-//                        if (!shipCoordinates.containsKey(ship)) {
-//                            shipCoordinates.put(ship, List.of(inputCoordinates));
-//                        } else {
-//                            shipCoordinates.get(ship).addAll(List.of(inputCoordinates));
-//                        }
+                        List<String> existingCoordinates = shipCoordinates.putIfAbsent(ship, Arrays.stream(inputCoordinates).toList());
+                        if (existingCoordinates != null) {
+                            existingCoordinates.addAll(List.of(inputCoordinates));
+                            shipCoordinates.put(ship, existingCoordinates);
+                        }
                         startCycle = false;
                     }
                 }
