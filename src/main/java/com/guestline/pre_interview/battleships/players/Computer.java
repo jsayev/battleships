@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * @author Jovhar Isayev
@@ -64,21 +65,21 @@ public final class Computer extends GameParticipant {
 
     @Override
     public EnumMap<Ship, List<String>> placeShips(Ship[] ships) {
-        EnumMap<Ship, List<String>> coordinates = new EnumMap<>(Ship.class);
+        EnumMap<Ship, List<String>> candidateCoordinates = new EnumMap<>(Ship.class);
         for (Ship ship : ships) {
             for (int count = 0; count < ship.count; count++) {
-                List<String> existingCoordinates = coordinates.putIfAbsent(ship, makeCoordinates(ship));
+                List<String> existingCoordinates = candidateCoordinates.putIfAbsent(ship, makeCoordinates(ship, candidateCoordinates));
                 if (existingCoordinates != null) {
-                    existingCoordinates.addAll(makeCoordinates(ship));
-                    coordinates.put(ship, existingCoordinates);
+                    existingCoordinates.addAll(makeCoordinates(ship, candidateCoordinates));
+                    candidateCoordinates.put(ship, existingCoordinates);
                 }
             }
         }
-        return coordinates;
+        return candidateCoordinates;
     }
 
-    private List<String> makeCoordinates(Ship ship) {
-        ArrayList<String> coordinates = new ArrayList<>();
+    private List<String> makeCoordinates(Ship ship, EnumMap<Ship, List<String>> candidateCoordinates) {
+        ArrayList<String> coordinatesOfShip = new ArrayList<>();
         String startCoordinate = String.format(
                 "%c%d",
                 (char) (new Random().nextInt(Game.MAP_ROW_SIZE) + 'A'),
@@ -87,11 +88,8 @@ public final class Computer extends GameParticipant {
         boolean startCycle = true;
         while (startCycle) {
             boolean alongHorizontalLine = new CoinTosser<>(true, false).toss();
-            if (isPlacementPossible(startCoordinate, ship, alongHorizontalLine)) {
-                coordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine));
-                startCycle = false;
-            } else if (isPlacementPossible(startCoordinate, ship, alongHorizontalLine)) {
-                coordinates.addAll(generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine));
+            if (isPlacementPossible(startCoordinate, ship, alongHorizontalLine, candidateCoordinates)) {
+                coordinatesOfShip.addAll(generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine));
                 startCycle = false;
             } else {
                 startCoordinate = String.format(
@@ -100,26 +98,25 @@ public final class Computer extends GameParticipant {
                         new Random().nextInt(Game.MAP_COLUMN_SIZE) + 1);
             }
         }
-        return coordinates;
+        return coordinatesOfShip;
     }
 
-    private boolean isPlacementPossible(String startCoordinate, Ship ship, boolean alongHorizontalLine) {
+    private boolean isPlacementPossible(String startCoordinate, Ship ship, boolean alongHorizontalLine, EnumMap<Ship, List<String>> candidateCoordinates) {
         int letterCoordinate = startCoordinate.charAt(0) - Game.START_COORDINATE_LETTER;
         int numberCoordinate = Integer.parseInt(startCoordinate.substring(1));
 
-        if (alongHorizontalLine && ship.length + numberCoordinate > Game.MAP_COLUMN_SIZE) {
-            return false;
-        } else if (ship.length + letterCoordinate > Game.MAP_ROW_SIZE) {
+        if ((alongHorizontalLine && ship.length + numberCoordinate > Game.MAP_COLUMN_SIZE) || (ship.length + letterCoordinate > Game.MAP_ROW_SIZE)) {
             return false;
         }
 
-        if (shipCoordinates.values().size() == 0) return true;
+        if (candidateCoordinates.values().size() == 0) return true;
 
         List<String> possibleCoordinates = generatePossibleCoordinates(startCoordinate, ship, alongHorizontalLine);
-
-        for (String possibleCoordinate : possibleCoordinates) {
-            for (List<String> coordinateList : shipCoordinates.values()) {
-                return coordinateList.stream().noneMatch(sc -> sc.equals(possibleCoordinate));
+        for (List<String> value : candidateCoordinates.values()) {
+            for (String coordinate : value) {
+                for (String possibleCoordinate : possibleCoordinates) {
+                    if (possibleCoordinate.equals(coordinate)) return false;
+                }
             }
         }
         return true;

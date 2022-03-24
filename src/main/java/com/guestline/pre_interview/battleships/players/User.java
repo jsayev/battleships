@@ -40,7 +40,7 @@ public final class User extends GameParticipant {
                     System.out.println("Please type in the cell coordinates(A1,A2,A3 etc.) with comma between them: ");
                     String[] inputCoordinates = input.nextLine().split(",");
                     if (validateUserInput(inputCoordinates, ship.length, coordinates)) {
-                        List<String> existingCoordinates = shipCoordinates.putIfAbsent(ship, Arrays.stream(inputCoordinates).toList());
+                        List<String> existingCoordinates = shipCoordinates.putIfAbsent(ship,new ArrayList<>(Arrays.stream(inputCoordinates).toList()));
                         if (existingCoordinates != null) {
                             existingCoordinates.addAll(List.of(inputCoordinates));
                             shipCoordinates.put(ship, existingCoordinates);
