@@ -22,6 +22,7 @@ public final class Computer extends GameParticipant {
     @Override
     public void play() {
         System.out.println(this + " plays");
+        // todo to be finished
 //        String pickedCoordinate = availableCoordinatesToHit.get(new Random().nextInt(availableCoordinatesToHit.size()));
 //        boolean startShooting = true;
 //        while (startShooting) {
