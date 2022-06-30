@@ -1,1 +1,2 @@
-BattleShips game on terminal
+# BattleShips game on terminal
+Not complete.
